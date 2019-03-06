@@ -2,7 +2,7 @@ package array
 
 import "fmt"
 
-func showArray() bool {
+func ShowArrays() {
 	// 形式1
 	var arr1 [3]int
 	arr1[0] = 1
@@ -17,5 +17,5 @@ func showArray() bool {
 
 	fmt.Println(arr1, arr2, arr3)
 
-	return true
+	return
 }

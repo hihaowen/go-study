@@ -1,11 +1,12 @@
 package main
 
-import (
-	"go-study/moretypes/array"
-)
+import "go-study/moretypes/slice"
 
 // 所有程序入口
 func main() {
 	// 数组
-	array.showArray()
+	// array.ShowArrays()
+
+	// 切片
+	slice.ShowSlice()
 }
