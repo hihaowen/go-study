@@ -22,4 +22,7 @@ func main() {
 
 	// defer
 	// _defer.Show()
+
+	// function
+	// function.Show()
 }
