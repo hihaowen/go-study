@@ -28,3 +28,7 @@ s1[0:] // 全部
 s1[:2] // 0~1
 s1[0:2] // 0~1
 ```
+
+## 参考链接
+* Go 切片：用法和本质 [:notebook:](https://blog.go-zh.org/go-slices-usage-and-internals)
+* 比较绕的练习 [:notebook:](https://tour.go-zh.org/moretypes/11)
