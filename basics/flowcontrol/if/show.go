@@ -12,4 +12,7 @@ func Show() {
 	if a := a + 1; a > 1 {
 		fmt.Println("a > 1")
 	}
+
+	// a 还是 1
+	fmt.Println(a)
 }
