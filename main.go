@@ -25,4 +25,7 @@ func main() {
 
 	// function
 	// function.Show()
+
+	// basic
+	// basics.Show()
 }
