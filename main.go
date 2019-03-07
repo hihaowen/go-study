@@ -10,5 +10,4 @@ func main() {
 
 	// map
 	// _map.ShowMap()
-
 }
