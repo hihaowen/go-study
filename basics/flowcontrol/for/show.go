@@ -17,7 +17,7 @@ func Show() {
 	}
 
 	// while 循环
-	i := 0
+	i = 0
 	for {
 		if i > 4 {
 			break

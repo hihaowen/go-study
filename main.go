@@ -1,7 +1,5 @@
 package main
 
-import "go-study/basics/flowcontrol/for"
-
 // 所有程序入口
 func main() {
 	// 数组
@@ -14,5 +12,8 @@ func main() {
 	// _map.ShowMap()
 
 	// for
-	_for.Show()
+	// _for.Show()
+
+	// if
+	// _if.Show()
 }
