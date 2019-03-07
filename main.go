@@ -19,4 +19,7 @@ func main() {
 
 	// switch
 	// _switch.Show()
+
+	// defer
+	// _defer.Show()
 }
