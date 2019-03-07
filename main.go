@@ -16,4 +16,7 @@ func main() {
 
 	// if
 	// _if.Show()
+
+	// switch
+	// _switch.Show()
 }
