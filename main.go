@@ -1,5 +1,7 @@
 package main
 
+import "go-study/basics/moretypes/pointer"
+
 // 所有程序入口
 func main() {
 	// 数组
@@ -28,4 +30,7 @@ func main() {
 
 	// basic
 	// basics.Show()
+
+	// pointer
+	pointer.Show()
 }
