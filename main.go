@@ -31,4 +31,7 @@ func main() {
 
 	// pointer
 	// pointer.Show()
+
+	// struct
+	// _struct.Show()
 }
