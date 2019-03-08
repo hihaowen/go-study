@@ -37,4 +37,7 @@ func main() {
 
 	// method
 	// method.Show()
+
+	// interface
+	// _interface.Show()
 }
