@@ -28,6 +28,21 @@ func Show()  {
 
 	// 验证接口类型，类似于PHP中instanceof
 	checkSmsService(sms)
+
+	// 实现错误接口
+	mysqlError := mysqlError{"connect error", 2104}
+
+	fmt.Println(&mysqlError)
+}
+
+// 定义错误结构体
+type mysqlError struct {
+	error string
+	errno int
+}
+
+func (error *mysqlError) Error() string {
+	return fmt.Sprintf("MySQL Error: %s, Errno: %d\n", error.error, error.errno)
 }
 
 // 验证接口类型
