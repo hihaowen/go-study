@@ -34,4 +34,7 @@ func main() {
 
 	// struct
 	// _struct.Show()
+
+	// method
+	// method.Show()
 }
