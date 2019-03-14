@@ -1,6 +1,6 @@
 # Go语言知识点整理
 
-## 1、[基本数据结构](basics)
+## [基本数据结构](basics)
 
 ### 1、int、string、bool、复数、float 
 
@@ -8,28 +8,28 @@
 
 ### 3、[结构体](basics/moretypes/struct)
 
-## 2、条件控制
+## 条件控制
 
 ### 1、[if](basics/flowcontrol/if)
 ### 2、[switch](basics/flowcontrol/switch)
 ### 3、[defer](basics/flowcontrol/defer)
 
-## 3、[for循环](basics/flowcontrol/for)
+## [for循环](basics/flowcontrol/for)
 
-## 4、集合
+## 集合
 ### 1、[数组](basics/moretypes/array)
 ### 2、[切片](basics/moretypes/slice)
 ### 3、[map](basics/moretypes/map)
 
-## 5、[函数](basics/moretypes/function)
+## [函数](basics/moretypes/function)
 ### 1、当值又当参数
 ### 2、闭包
 
-## 6、方法和接口
+## 方法和接口
 ### 1、[方法](methods/method)
 ### 2、[接口](methods/interface)
 
-## 7、并发(goroutine)
+## 并发(goroutine)
 ### 1、[go程](concurrency/goroutine)
 ### 2、[信道](concurrency/channel)
 ### 3、[select](concurrency/select)
