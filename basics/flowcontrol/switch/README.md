@@ -1,34 +1,26 @@
-# switch
-跟传统的switch一样，不过还是有些区别：
-* case之后自动增加了break
-* 条件语句前面可以增加一条简单的执行，这一点跟`if`一样
-* case条件语句可以是常量，也可以是值运算
+# switch[notebook:](https://golang.org/ref/spec#Switch_statements)
 
 ## 作用
-没啥可说的
+`@todo`
 
-## 表现形式
+## 用法
+```text
+switch tag {
+default: s3()
+case 0, 1, 2, 3: s1()
+case 4, 5, 6, 7: s2()
+}
 
-### 常规的
-```$xslt
-    switch status {
-	case 1:
-		statusDesc = "check"
-	case 2:
-		statusDesc = "done"
-	case 3:
-		statusDesc = "delete"
-	default:
-	    statusDesc = "no known"
-	}
+switch x := f(); {  // missing switch expression means "true"
+case x < 0: return -x
+default: return x
+}
+
+switch {
+case x < y: f1()
+case x < z: f2()
+case x == 4: f3()
+}
 ```
 
-### case为值运算
-```$xslt
-    switch status {
-	case getStatusDesc("check"):
-		statusDesc = "check"
-	default:
-		statusDesc = "no known"
-	}
-```
+
