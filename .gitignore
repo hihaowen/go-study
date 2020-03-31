@@ -4,3 +4,6 @@
 # tmp file
 *.txt
 *.dat
+
+# Mac
+.DS_Store

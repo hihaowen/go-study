@@ -187,7 +187,6 @@ func mergeVideo(m3u8File string, file string, title string) {
 func grabTsFile(url string, wg *sync.WaitGroup, basePath string) {
 	defer wg.Done()
 
-	// http grab content
 	res, err := http.Get(url)
 	if err != nil {
 		log.Fatal("http内容抓取错误:" + err.Error())
