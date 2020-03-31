@@ -58,18 +58,18 @@ func main() {
 	m3u8Url := fmt.Sprintf("https://www.zuo9.live/api/app/m3u8/index.m3u8?uuid=%s&token=123456&nonce=123456&rate=720", *uuid)
 	keyUrl := fmt.Sprintf("https://www.zuo9.live/api/app/m3u8/index.key?uuid=%s&rate=720", *uuid)
 
-	// toDir := md5Sum(m3u8Url)
-	toDir := *title
-	err := os.MkdirAll(basePath+"/"+toDir, 0755)
+	// partFilesDir := md5Sum(m3u8Url)
+	partFilesDir := basePath + "/" + *title
+	err := os.MkdirAll(partFilesDir, 0755)
 	if err != nil {
 		log.Fatal("mkdir error:", err.Error())
 	}
 
 	// 1.grab m3u8 file、key file
-	m3u8File := grabIntoFile(m3u8Url, toDir+"/index.m3u8")
+	m3u8File := grabIntoFile(m3u8Url, partFilesDir+"/index.m3u8")
 	log.Println("m3u8:", m3u8File)
 
-	keyFile := grabIntoFile(keyUrl, toDir+"/index.key")
+	keyFile := grabIntoFile(keyUrl, partFilesDir+"/index.key")
 	log.Println("key:", keyFile)
 
 	// 2.read m3u8 file, for fetch per valid line and pull video info, save into a file
@@ -86,14 +86,15 @@ func main() {
 		// 3.1 modify m3u8 file
 		m3u8FileModify(m3u8File)
 
-		mergeVideo(m3u8File, toDir+"/index.mp4")
+		videoFile := partFilesDir + ".mp4"
 
-		/*
-			err = os.RemoveAll(toDir)
-			if err != nil {
-				log.Fatal("清理临时保存目录:" + err.Error())
-			}
-		*/
+		mergeVideo(m3u8File, videoFile)
+
+		// 3.2 remove part files dir
+		err = os.RemoveAll(partFilesDir)
+		if err != nil {
+			log.Fatalf("remove part files dir error: %s, dir: %s", err.Error(), partFilesDir)
+		}
 	}()
 
 	// 正在运行的processors channel
@@ -115,14 +116,14 @@ func main() {
 
 		processors++
 
-		go func(tsUrl, toDir string) {
+		go func(tsUrl, partFilesDir string) {
 			runProcessorsChan <- 1
 			log.Println("fetch video from:", tsUrl)
-			tsFile := grabTsFile(tsUrl, toDir+"/"+tsUrl[strings.LastIndex(tsUrl, "/"):])
+			tsFile := grabTsFile(tsUrl, partFilesDir+"/"+tsUrl[strings.LastIndex(tsUrl, "/"):])
 			log.Println("fetch video ok:", tsFile)
 			<-runProcessorsChan
 			quitProcessorsChan <- true
-		}(string(l), toDir)
+		}(string(l), partFilesDir)
 	}
 
 	// 等待所有进程退出
