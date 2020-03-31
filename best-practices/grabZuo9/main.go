@@ -34,11 +34,11 @@ func init() {
 // 当前运行文件目录
 var basePath = func() string {
 	// 获取当前目录地址
-	basePath, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	bp, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
 		log.Fatal("获取当前目录地址" + err.Error())
 	}
-	return basePath + "/v"
+	return bp + "/v"
 }()
 
 // http client
@@ -151,7 +151,7 @@ func m3u8FileModify(m3u8File string) {
 }
 
 func mergeVideo(m3u8File string, toFile string) {
-	cmd := exec.Command("ffmpeg", "-allowed_extensions", `ALL`, "-i", m3u8File, "-c", `copy`, basePath+"/"+toFile)
+	cmd := exec.Command("ffmpeg", "-allowed_extensions", `ALL`, "-i", m3u8File, "-c", `copy`, toFile)
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
 		log.Fatal("视频合并失败:", toFile, err)
@@ -225,12 +225,11 @@ func grabTsFile(url, toFile string) string {
 	}
 
 	// save content into file
-	fn := filepath.Join(basePath, toFile)
-	if err := ioutil.WriteFile(fn, ts, 0666); err != nil {
+	if err := ioutil.WriteFile(toFile, ts, 0666); err != nil {
 		log.Fatal("save ts file error:", err.Error())
 	}
 
-	return fn
+	return toFile
 }
 
 func grabIntoFile(url, toFile string) string {
@@ -259,12 +258,11 @@ func grabIntoFile(url, toFile string) string {
 	}
 
 	// save content into file
-	fn := filepath.Join(basePath, toFile)
-	if err := ioutil.WriteFile(fn, ts, 0666); err != nil {
-		log.Fatal("保存文件错误:", err.Error())
+	if err := ioutil.WriteFile(toFile, ts, 0666); err != nil {
+		log.Fatal("save file error:", err.Error())
 	}
 
-	return fn
+	return toFile
 }
 
 func md5Sum(s string) string {
