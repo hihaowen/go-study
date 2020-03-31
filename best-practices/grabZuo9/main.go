@@ -170,29 +170,30 @@ func mergeVideo(m3u8File string, toFile string) {
 	log.Println("视频合并成功", toFile)
 }
 
-type grabTsRetry struct {
+type retryLock struct {
 	retry map[string]uint
 	lock  sync.RWMutex
 }
 
-func (r *grabTsRetry) set(uniq string, retry uint) {
+func (r *retryLock) set(uniq string, retry uint) {
 	defer r.lock.Unlock()
 	r.lock.Lock()
 	r.retry[uniq] = retry
 }
 
-func (r *grabTsRetry) get(uniq string) uint {
+func (r *retryLock) get(uniq string) uint {
 	defer r.lock.RUnlock()
 	r.lock.RLock()
 	v, _ := r.retry[uniq]
 	return v
 }
 
-var grabTsRetryLock = newGrabTsRetryLock()
+// 抓取视频重试锁
+var grapRetryLock = newRetryLock()
 
-func newGrabTsRetryLock() *grabTsRetry {
+func newRetryLock() *retryLock {
 	retry := make(map[string]uint, 0)
-	return &grabTsRetry{retry: retry}
+	return &retryLock{retry: retry}
 }
 
 // 根据地址抓取并下载保存
@@ -200,26 +201,26 @@ func grabTsFile(url, toFile string) string {
 
 	res, err := httpClient.Get(url)
 	if err != nil {
-		retry := grabTsRetryLock.get(url)
-		if retry < 3 {
-			log.Printf("http request error: %s, retry: %d\n", err.Error(), retry)
+		retry := grapRetryLock.get(url)
+		if retry < 5 {
+			retry++
+			grapRetryLock.set(url, retry)
+			log.Printf("http request error: %s, url: %s, retry: %d\n", err.Error(), url, retry)
 			return grabTsFile(url, toFile)
 		}
-
-		grabTsRetryLock.set(url, retry+1)
-		log.Fatal("http request error:", err.Error())
+		log.Printf("http request error: %s, url: %s\n", err.Error(), url)
 	}
 
 	ts, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		retry := grabTsRetryLock.get(url)
-		if retry < 3 {
-			log.Printf("http get response error: %s, retry: %d\n", err.Error(), retry)
+		retry := grapRetryLock.get(url)
+		if retry < 5 {
+			retry++
+			grapRetryLock.set(url, retry)
+			log.Printf("http response error: %s, url: %s, retry: %d\n", err.Error(), url, retry)
 			return grabTsFile(url, toFile)
 		}
-
-		grabTsRetryLock.set(url, retry+1)
-		log.Fatal("http get response error:", err.Error())
+		log.Printf("http response error: %s, url: %s\n", err.Error(), url)
 	}
 
 	// save content into file
@@ -232,15 +233,28 @@ func grabTsFile(url, toFile string) string {
 }
 
 func grabIntoFile(url, toFile string) string {
-	// http grab content
 	res, err := httpClient.Get(url)
 	if err != nil {
-		log.Fatal("http内容抓取错误:", err.Error())
+		retry := grapRetryLock.get(url)
+		if retry < 5 {
+			retry++
+			grapRetryLock.set(url, retry)
+			log.Printf("http request error: %s, url: %s, retry: %d\n", err.Error(), url, retry)
+			return grabIntoFile(url, toFile)
+		}
+		log.Printf("http request error: %s, url: %s\n", err.Error(), url)
 	}
 
 	ts, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		log.Fatal("http内容读取:", err.Error())
+		retry := grapRetryLock.get(url)
+		if retry < 5 {
+			retry++
+			grapRetryLock.set(url, retry)
+			log.Printf("http response error: %s, url: %s, retry: %d\n", err.Error(), url, retry)
+			return grabIntoFile(url, toFile)
+		}
+		log.Printf("http response error: %s, url: %s\n", err.Error(), url)
 	}
 
 	// save content into file
