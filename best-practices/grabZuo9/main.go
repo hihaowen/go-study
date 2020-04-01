@@ -188,7 +188,7 @@ func (r *retryLock) get(uniq string) uint {
 }
 
 // 抓取视频重试锁
-var grapRetryLock = newRetryLock()
+var grabRetryLock = newRetryLock()
 
 func newRetryLock() *retryLock {
 	retry := make(map[string]uint, 0)
@@ -198,10 +198,10 @@ func newRetryLock() *retryLock {
 func grabIntoFile(url, toFile string) string {
 	res, err := httpClient.Get(url)
 	if err != nil {
-		retry := grapRetryLock.get(url)
+		retry := grabRetryLock.get(url)
 		if retry < 5 {
 			retry++
-			grapRetryLock.set(url, retry)
+			grabRetryLock.set(url, retry)
 			log.Printf("http request error: %s, url: %s, retry: %d\n", err.Error(), url, retry)
 			return grabIntoFile(url, toFile)
 		}
@@ -210,10 +210,10 @@ func grabIntoFile(url, toFile string) string {
 
 	ts, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		retry := grapRetryLock.get(url)
+		retry := grabRetryLock.get(url)
 		if retry < 5 {
 			retry++
-			grapRetryLock.set(url, retry)
+			grabRetryLock.set(url, retry)
 			log.Printf("http response error: %s, url: %s, retry: %d\n", err.Error(), url, retry)
 			return grabIntoFile(url, toFile)
 		}
