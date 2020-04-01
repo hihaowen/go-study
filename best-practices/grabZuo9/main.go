@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"crypto/md5"
 	"flag"
 	"fmt"
 	"io"
@@ -58,7 +57,6 @@ func main() {
 	m3u8Url := fmt.Sprintf("https://www.zuo9.live/api/app/m3u8/index.m3u8?uuid=%s&token=123456&nonce=123456&rate=720", *uuid)
 	keyUrl := fmt.Sprintf("https://www.zuo9.live/api/app/m3u8/index.key?uuid=%s&rate=720", *uuid)
 
-	// partFilesDir := md5Sum(m3u8Url)
 	partFilesDir := basePath + "/" + *title
 	err := os.MkdirAll(partFilesDir, 0755)
 	if err != nil {
@@ -263,8 +261,4 @@ func grabIntoFile(url, toFile string) string {
 	}
 
 	return toFile
-}
-
-func md5Sum(s string) string {
-	return fmt.Sprintf("%x", md5.Sum([]byte(s)))
 }
