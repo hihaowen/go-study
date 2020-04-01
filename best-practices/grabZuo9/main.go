@@ -117,7 +117,7 @@ func main() {
 		go func(tsUrl, partFilesDir string) {
 			runProcessorsChan <- 1
 			log.Println("fetch video from:", tsUrl)
-			tsFile := grabTsFile(tsUrl, partFilesDir+"/"+tsUrl[strings.LastIndex(tsUrl, "/"):])
+			tsFile := grabIntoFile(tsUrl, partFilesDir+"/"+tsUrl[strings.LastIndex(tsUrl, "/"):])
 			log.Println("fetch video ok:", tsFile)
 			<-runProcessorsChan
 			quitProcessorsChan <- true
@@ -152,21 +152,21 @@ func mergeVideo(m3u8File string, toFile string) {
 	cmd := exec.Command("ffmpeg", "-allowed_extensions", `ALL`, "-i", m3u8File, "-c", `copy`, toFile)
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
-		log.Fatal("视频合并失败:", toFile, err)
+		log.Fatal("merge failed:", toFile, err)
 	}
 
 	if err := cmd.Start(); err != nil {
-		log.Fatal("视频合并失败:", toFile, err)
+		log.Fatal("merge failed:", toFile, err)
 	}
 
 	slurp, _ := ioutil.ReadAll(stderr)
-	log.Printf("视频合并打印: %s\n", slurp)
+	log.Printf("merge and print: %s\n", slurp)
 
 	if err := cmd.Wait(); err != nil {
-		log.Fatal("视频合并失败:", toFile, err)
+		log.Fatal("merge failed:", toFile, err)
 	}
 
-	log.Println("视频合并成功", toFile)
+	log.Println("merge success:", toFile)
 }
 
 type retryLock struct {
@@ -193,41 +193,6 @@ var grapRetryLock = newRetryLock()
 func newRetryLock() *retryLock {
 	retry := make(map[string]uint, 0)
 	return &retryLock{retry: retry}
-}
-
-// 根据地址抓取并下载保存
-func grabTsFile(url, toFile string) string {
-
-	res, err := httpClient.Get(url)
-	if err != nil {
-		retry := grapRetryLock.get(url)
-		if retry < 5 {
-			retry++
-			grapRetryLock.set(url, retry)
-			log.Printf("http request error: %s, url: %s, retry: %d\n", err.Error(), url, retry)
-			return grabTsFile(url, toFile)
-		}
-		log.Printf("http request error: %s, url: %s\n", err.Error(), url)
-	}
-
-	ts, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		retry := grapRetryLock.get(url)
-		if retry < 5 {
-			retry++
-			grapRetryLock.set(url, retry)
-			log.Printf("http response error: %s, url: %s, retry: %d\n", err.Error(), url, retry)
-			return grabTsFile(url, toFile)
-		}
-		log.Printf("http response error: %s, url: %s\n", err.Error(), url)
-	}
-
-	// save content into file
-	if err := ioutil.WriteFile(toFile, ts, 0666); err != nil {
-		log.Fatal("save ts file error:", err.Error())
-	}
-
-	return toFile
 }
 
 func grabIntoFile(url, toFile string) string {
