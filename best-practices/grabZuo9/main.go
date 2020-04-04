@@ -196,28 +196,34 @@ func newRetryLock() *retryLock {
 }
 
 func grabIntoFile(url, toFile string) string {
+	// if file exists
+	_, err := os.Stat(toFile)
+	if err == nil {
+		return toFile
+	}
+
 	res, err := httpClient.Get(url)
 	if err != nil {
 		retry := grabRetryLock.get(url)
-		if retry < 5 {
+		if retry < 30 {
 			retry++
 			grabRetryLock.set(url, retry)
 			log.Printf("http request error: %s, url: %s, retry: %d\n", err.Error(), url, retry)
 			return grabIntoFile(url, toFile)
 		}
-		log.Printf("http request error: %s, url: %s\n", err.Error(), url)
+		log.Fatalf("http request error: %s, url: %s\n", err.Error(), url)
 	}
 
 	ts, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		retry := grabRetryLock.get(url)
-		if retry < 5 {
+		if retry < 30 {
 			retry++
 			grabRetryLock.set(url, retry)
 			log.Printf("http response error: %s, url: %s, retry: %d\n", err.Error(), url, retry)
 			return grabIntoFile(url, toFile)
 		}
-		log.Printf("http response error: %s, url: %s\n", err.Error(), url)
+		log.Fatalf("http response error: %s, url: %s\n", err.Error(), url)
 	}
 
 	// save content into file
