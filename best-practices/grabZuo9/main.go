@@ -198,7 +198,7 @@ func newRetryLock() *retryLock {
 func grabIntoFile(url, toFile string) string {
 	// if file exists
 	_, err := os.Stat(toFile)
-	if err == nil {
+	if err != nil {
 		return toFile
 	}
 
